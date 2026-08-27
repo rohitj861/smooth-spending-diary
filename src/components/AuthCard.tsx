@@ -40,15 +40,20 @@ export function AuthCard() {
   return (
     <main className="min-h-screen bg-background">
       <BlackHoleHeroSection
-        className="min-h-[88vh]"
+        className="min-h-[100svh]"
         scrim="left"
-        scrimStrength={0.85}
-        focus={[0.72, 0.45]}
+        scrimStrength={0.8}
+        distance={44}
+        fov={30}
+        elevation={-6}
+        roll={-18}
+        focus={[0.75, 0.46]}
         hotColor="#FFE9D2"
         midColor="#E2703A"
         coolColor="#5C2A12"
       >
-        <div className="mx-auto flex min-h-[88vh] w-full max-w-6xl flex-col justify-center px-6 py-20 sm:px-10">
+        <div className="mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col justify-center px-6 py-20 sm:px-10">
+
           <div className="mb-10 flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.35em] text-primary-foreground/70">
             <span className="grid h-6 w-6 place-items-center rounded-md border border-primary-foreground/30">
               ₽
