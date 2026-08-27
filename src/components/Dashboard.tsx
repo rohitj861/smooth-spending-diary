@@ -11,6 +11,15 @@ function isThisMonth(date: string) {
   return date.slice(0, 7) === todayISO().slice(0, 7);
 }
 
+const CATEGORY_COLORS = [
+  "oklch(0.52 0.12 45)", // terracotta
+  "oklch(0.55 0.08 90)", // olive
+  "oklch(0.48 0.06 160)", // sage
+  "oklch(0.52 0.09 20)", // clay rose
+  "oklch(0.45 0.05 220)", // slate blue
+  "oklch(0.62 0.09 60)", // honey
+];
+
 function StatCard({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <div className="rounded-3xl border bg-card p-7 shadow-soft">
