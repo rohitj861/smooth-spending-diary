@@ -8,7 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { AuthCard } from "@/components/AuthCard";
 import { ExpenseForm, type ExpenseDraft } from "@/components/ExpenseForm";
 import { ExpenseList } from "@/components/ExpenseList";
+import { Dashboard } from "@/components/Dashboard";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
