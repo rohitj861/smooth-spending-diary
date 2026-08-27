@@ -34,6 +34,8 @@ export const Route = createFileRoute("/")({
         content:
           "Log expenses by category with notes and dates. Simple, private, and saved to your account.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Index,
