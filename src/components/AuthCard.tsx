@@ -38,33 +38,68 @@ export function AuthCard() {
   }
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-background">
       <BlackHoleHeroSection
-        className="min-h-screen"
+        className="min-h-[88vh]"
         scrim="left"
         scrimStrength={0.85}
-        focus={[0.7, 0.42]}
+        focus={[0.72, 0.45]}
         hotColor="#FFE9D2"
         midColor="#E2703A"
         coolColor="#5C2A12"
       >
-        <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center justify-center gap-12 px-6 py-16 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
-          <div className="max-w-xl text-center lg:text-left">
-            <p className="text-xs uppercase tracking-[0.3em] text-primary">Pennywise</p>
-            <h1 className="mt-6 text-5xl font-semibold leading-[1.05] tracking-tight text-primary-foreground sm:text-6xl lg:text-7xl">
-              Spend with intention
-            </h1>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-primary-foreground/60 lg:mx-0 mx-auto">
-              A quiet place to record what you spend. Every expense, saved to
-              your account — nothing else pulling at your attention.
+        <div className="mx-auto flex min-h-[88vh] w-full max-w-6xl flex-col justify-center px-6 py-20 sm:px-10">
+          <div className="mb-10 flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.35em] text-primary-foreground/70">
+            <span className="grid h-6 w-6 place-items-center rounded-md border border-primary-foreground/30">
+              ₽
+            </span>
+            Pennywise
+          </div>
+          <h1 className="max-w-2xl text-5xl font-semibold leading-[1.02] tracking-tight text-primary-foreground sm:text-6xl lg:text-7xl">
+            Money has a
+            <br />
+            gravity of its own
+          </h1>
+          <p className="mt-7 max-w-md text-sm leading-relaxed text-primary-foreground/65 sm:text-base">
+            Small spends pull harder than they look. Pennywise tracks every one
+            of them, quietly, and shows you where it all went.
+          </p>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <a
+              href="#access"
+              onClick={() => setMode("signup")}
+              className="rounded-full bg-card px-6 py-3 text-sm font-medium text-card-foreground transition hover:opacity-90"
+            >
+              Get started
+            </a>
+            <a
+              href="#access"
+              onClick={() => setMode("signin")}
+              className="rounded-full border border-primary-foreground/30 px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary-foreground/10"
+            >
+              Sign in
+            </a>
+          </div>
+        </div>
+      </BlackHoleHeroSection>
+
+      <section id="access" className="px-6 py-24 sm:px-10">
+        <div className="mx-auto grid w-full max-w-5xl gap-14 lg:grid-cols-2 lg:items-center">
+          <div>
+            <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+              Quiet, careful expense tracking.
+            </h2>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground">
+              Log an amount, pick a category, add a note if you want. Everything
+              is saved to your account and waiting for you next time.
             </p>
           </div>
 
-          <div className="w-full max-w-sm shrink-0">
-            <div className="rounded-3xl border bg-card/95 p-8 shadow-lift backdrop-blur">
-              <h2 className="mb-6 text-xl font-semibold">
+          <div className="w-full max-w-sm justify-self-end">
+            <div className="rounded-3xl border bg-card p-8 shadow-lift">
+              <h3 className="mb-6 text-xl font-semibold">
                 {mode === "signin" ? "Welcome back" : "Create your account"}
-              </h2>
+              </h3>
               <form onSubmit={onSubmit} className="space-y-5">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
@@ -111,7 +146,8 @@ export function AuthCard() {
             </div>
           </div>
         </div>
-      </BlackHoleHeroSection>
+      </section>
     </main>
   );
 }
+
