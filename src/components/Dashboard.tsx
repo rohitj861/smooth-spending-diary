@@ -17,7 +17,9 @@ function StatCard({ label, value, hint }: { label: string; value: string; hint?:
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
         {label}
       </p>
-      <p className="mt-4 text-4xl font-bold tabular-nums tracking-tight">{value}</p>
+      <p className="mt-4 break-words text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
+        {value}
+      </p>
       {hint && <p className="mt-2 text-xs text-muted-foreground">{hint}</p>}
     </div>
   );
