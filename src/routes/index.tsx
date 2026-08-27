@@ -133,7 +133,7 @@ function Tracker({ email }: { email: string }) {
   return (
     <div className="min-h-screen">
       <header className="border-b bg-card/50">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
+        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-6">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-primary">Pennywise</p>
             <p className="mt-1 text-sm text-muted-foreground">{email}</p>
@@ -144,35 +144,58 @@ function Tracker({ email }: { email: string }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-6 py-14">
-        <section className="mb-12">
-          <h1 className="text-4xl font-semibold">Your spending</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
+      <main className="mx-auto max-w-4xl px-6 py-16">
+        <section className="mb-10">
+          <h1 className="text-5xl font-bold tracking-tight">Your spending</h1>
+          <p className="mt-4 text-sm text-muted-foreground">
             {expenses.length} {expenses.length === 1 ? "entry" : "entries"} · total{" "}
             <span className="font-medium text-foreground">{formatAmount(total)}</span>
           </p>
         </section>
 
-        <section className="mb-14 rounded-3xl border bg-card p-8 shadow-soft">
-          <h2 className="mb-6 text-lg font-semibold">Add an expense</h2>
-          <ExpenseForm
-            submitting={addMutation.isPending}
-            onSubmit={(draft) => addMutation.mutate(draft)}
-          />
-        </section>
+        <Tabs defaultValue="dashboard" className="w-full">
+          <TabsList className="mb-12 h-11 rounded-2xl p-1">
+            <TabsTrigger value="dashboard" className="rounded-xl px-5">
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="expenses" className="rounded-xl px-5">
+              Expenses
+            </TabsTrigger>
+          </TabsList>
 
-        <section>
-          <h2 className="mb-6 text-lg font-semibold">Recent expenses</h2>
-          {isLoading ? (
-            <p className="text-sm text-muted-foreground">Loading…</p>
-          ) : (
-            <ExpenseList
-              expenses={expenses}
-              onEdit={setEditing}
-              onDelete={(expense) => deleteMutation.mutate(expense.id)}
-            />
-          )}
-        </section>
+          <TabsContent value="dashboard">
+            {isLoading ? (
+              <p className="text-sm text-muted-foreground">Loading…</p>
+            ) : (
+              <Dashboard expenses={expenses} />
+            )}
+          </TabsContent>
+
+          <TabsContent value="expenses">
+            <div className="space-y-16">
+              <section className="rounded-3xl border bg-card p-8 shadow-soft">
+                <h2 className="mb-6 text-2xl font-semibold">Add an expense</h2>
+                <ExpenseForm
+                  submitting={addMutation.isPending}
+                  onSubmit={(draft) => addMutation.mutate(draft)}
+                />
+              </section>
+
+              <section>
+                <h2 className="mb-6 text-2xl font-semibold">All expenses</h2>
+                {isLoading ? (
+                  <p className="text-sm text-muted-foreground">Loading…</p>
+                ) : (
+                  <ExpenseList
+                    expenses={expenses}
+                    onEdit={setEditing}
+                    onDelete={(expense) => deleteMutation.mutate(expense.id)}
+                  />
+                )}
+              </section>
+            </div>
+          </TabsContent>
+        </Tabs>
       </main>
 
       <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
