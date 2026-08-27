@@ -79,28 +79,39 @@ export async function generateText(prompt: string) {
 }
 
 export async function speak(text: string) {
-  const key = process.env["LOVABLE_API_KEY"];
+  const key = process.env["ELEVENLABS_API_KEY"];
   if (!key) throw new Error("Voice is not configured.");
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "openai/gpt-4o-mini-tts",
-      input: text,
-      voice: "alloy",
-      response_format: "mp3",
-      stream_format: "audio",
-    }),
-  });
-  if (res.status === 429) throw new Error("Too many requests right now — try again in a moment.");
-  if (res.status === 402) throw new Error("AI credits are exhausted. Add credits to continue.");
-  if (!res.ok) throw new Error(`Voice request failed (${res.status})`);
 
-  const buf = new Uint8Array(await res.arrayBuffer());
-  let binary = "";
-  const chunk = 0x8000;
-  for (let i = 0; i < buf.length; i += chunk) {
-    binary += String.fromCharCode(...buf.subarray(i, i + chunk));
+  const voiceId = "JBFqnCBsd6RMkjVDRZzb"; // George — calm narration voice
+  const res = await fetch(
+    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+    {
+      method: "POST",
+      headers: {
+        "xi-api-key": key,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text,
+        model_id: "eleven_turbo_v2_5",
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.75,
+          style: 0.5,
+          use_speaker_boost: true,
+          speed: 1.0,
+        },
+      }),
+    },
+  );
+
+  if (res.status === 429) throw new Error("Too many requests right now — try again in a moment.");
+  if (res.status === 402) throw new Error("ElevenLabs credits are exhausted. Add credits to continue.");
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err || `Voice request failed (${res.status})`);
   }
-  return btoa(binary);
+
+  const buffer = await res.arrayBuffer();
+  return Buffer.from(buffer).toString("base64");
 }
