@@ -976,36 +976,36 @@ export function BlackHoleHeroSection({
       /* scene ------------------------------------------------------------- */
       pass(sceneProg, scene);
       const u = sceneProg.u;
-      gl!.uniform2f(u['uRes'], scene.w, scene.h);
-      gl!.uniform1f(u['uTime'], t);
-      gl!.uniform3f(u['uCamPos'], camX, camY, camZ);
-      gl!.uniform3f(u['uRight'], RX, RY, RZ);
-      gl!.uniform3f(u['uUp'], UX, UY, UZ);
-      gl!.uniform3f(u['uFwd'], fx, fy, fz);
-      gl!.uniform1f(u['uTanHalf'], Math.tan(Math.max(8, Math.min(110, C.fov)) * 0.5 * RAD));
+      gl!.uniform2f(u['uRes']!, scene.w, scene.h);
+      gl!.uniform1f(u['uTime']!, t);
+      gl!.uniform3f(u['uCamPos']!, camX, camY, camZ);
+      gl!.uniform3f(u['uRight']!, RX, RY, RZ);
+      gl!.uniform3f(u['uUp']!, UX, UY, UZ);
+      gl!.uniform3f(u['uFwd']!, fx, fy, fz);
+      gl!.uniform1f(u['uTanHalf']!, Math.tan(Math.max(8, Math.min(110, C.fov)) * 0.5 * RAD));
       // gl_FragCoord counts up from the bottom; the prop reads from the top.
-      gl!.uniform2f(u['uFocus'], C.focus[0], 1 - C.focus[1]);
+      gl!.uniform2f(u['uFocus']!, C.focus[0], 1 - C.focus[1]);
       gl!.uniform1f(
-        u['uSteps'],
+        u['uSteps']!,
         software ? 130 : Math.max(60, Math.min(460, Math.round(C.steps)))
       );
-      gl!.uniform1f(u['uSkyR'], Math.max(dist * 1.35, outer * 2.4));
-      gl!.uniform1f(u['uDiskIn'], Math.max(1.05, C.diskInner));
-      gl!.uniform1f(u['uDiskOut'], outer);
-      gl!.uniform1f(u['uThick'], Math.max(0.02, C.diskThickness));
-      gl!.uniform1f(u['uDensity'], Math.max(0, C.diskDensity));
-      gl!.uniform1f(u['uSpin'], C.spinSpeed * 6.2831853);
-      gl!.uniform1f(u['uGrain'], Math.max(0.02, C.grain));
-      gl!.uniform1f(u['uBright'], Math.max(0, C.brightness));
-      gl!.uniform1f(u['uDoppler'], Math.max(0, Math.min(1, C.doppler)));
-      gl!.uniform3f(u['uHot'], hot[0], hot[1], hot[2]);
-      gl!.uniform3f(u['uMid'], mid[0], mid[1], mid[2]);
-      gl!.uniform3f(u['uCool'], cool[0], cool[1], cool[2]);
-      gl!.uniform1f(u['uStars'], Math.max(0, C.starBrightness));
-      gl!.uniform1f(u['uEncode'], hdr ? 0 : 1);
+      gl!.uniform1f(u['uSkyR']!, Math.max(dist * 1.35, outer * 2.4));
+      gl!.uniform1f(u['uDiskIn']!, Math.max(1.05, C.diskInner));
+      gl!.uniform1f(u['uDiskOut']!, outer);
+      gl!.uniform1f(u['uThick']!, Math.max(0.02, C.diskThickness));
+      gl!.uniform1f(u['uDensity']!, Math.max(0, C.diskDensity));
+      gl!.uniform1f(u['uSpin']!, C.spinSpeed * 6.2831853);
+      gl!.uniform1f(u['uGrain']!, Math.max(0.02, C.grain));
+      gl!.uniform1f(u['uBright']!, Math.max(0, C.brightness));
+      gl!.uniform1f(u['uDoppler']!, Math.max(0, Math.min(1, C.doppler)));
+      gl!.uniform3f(u['uHot']!, hot[0], hot[1], hot[2]);
+      gl!.uniform3f(u['uMid']!, mid[0], mid[1], mid[2]);
+      gl!.uniform3f(u['uCool']!, cool[0], cool[1], cool[2]);
+      gl!.uniform1f(u['uStars']!, Math.max(0, C.starBrightness));
+      gl!.uniform1f(u['uEncode']!, hdr ? 0 : 1);
       const h = HALTON[settled % HALTON.length]!;
-      gl!.uniform2f(u['uJitter'], h[0]! - 0.5, h[1]! - 0.5);
-      gl!.uniform1f(u['uSeed'], (settled % 64) * 17.13);
+      gl!.uniform2f(u['uJitter']!, h[0]! - 0.5, h[1]! - 0.5);
+      gl!.uniform1f(u['uSeed']!, (settled % 64) * 17.13);
       draw();
 
       /* fold into the running average ------------------------------------- */
@@ -1016,9 +1016,9 @@ export function BlackHoleHeroSection({
       pass(blendProg, histB);
       bind(scene.tex, 0);
       bind(histA.tex, 1);
-      gl!.uniform1i(blendProg.u['uCur'], 0);
-      gl!.uniform1i(blendProg.u['uPrev'], 1);
-      gl!.uniform1f(blendProg.u['uAlpha'], alpha);
+      gl!.uniform1i(blendProg.u['uCur']!, 0);
+      gl!.uniform1i(blendProg.u['uPrev']!, 1);
+      gl!.uniform1f(blendProg.u['uAlpha']!, alpha);
       draw();
       const shown = histB;
       const tmp = histA;
@@ -1029,19 +1029,19 @@ export function BlackHoleHeroSection({
       /* bright pass ------------------------------------------------------- */
       pass(brightProg, bloomA);
       bind(shown.tex, 0);
-      gl!.uniform1i(brightProg.u['uTex'], 0);
-      gl!.uniform2f(brightProg.u['uTexel'], 1 / shown.w, 1 / shown.h);
-      gl!.uniform1f(brightProg.u['uDecode'], hdr ? 0 : 1);
-      gl!.uniform1f(brightProg.u['uPack'], pack);
-      gl!.uniform1f(brightProg.u['uThreshold'], 0.85);
+      gl!.uniform1i(brightProg.u['uTex']!, 0);
+      gl!.uniform2f(brightProg.u['uTexel']!, 1 / shown.w, 1 / shown.h);
+      gl!.uniform1f(brightProg.u['uDecode']!, hdr ? 0 : 1);
+      gl!.uniform1f(brightProg.u['uPack']!, pack);
+      gl!.uniform1f(brightProg.u['uThreshold']!, 0.85);
       draw();
 
       /* two rounds of blur, the second wider ------------------------------ */
       const blurStep = (src: Target, dst: Target, dx: number, dy: number) => {
         pass(blurProg!, dst);
         bind(src.tex, 0);
-        gl!.uniform1i(blurProg!.u['uTex'], 0);
-        gl!.uniform2f(blurProg!.u['uStep'], dx / dst.w, dy / dst.h);
+        gl!.uniform1i(blurProg!.u['uTex']!, 0);
+        gl!.uniform2f(blurProg!.u['uStep']!, dx / dst.w, dy / dst.h);
         draw();
       };
       blurStep(bloomA, bloomB, 1, 0);
@@ -1053,20 +1053,20 @@ export function BlackHoleHeroSection({
       pass(compProg, null);
       bind(shown.tex, 0);
       bind(bloomA.tex, 1);
-      gl!.uniform1i(compProg.u['uScene'], 0);
-      gl!.uniform1i(compProg.u['uBloom'], 1);
-      gl!.uniform2f(compProg.u['uRes'], width, height);
-      gl!.uniform1f(compProg.u['uDecode'], hdr ? 0 : 1);
-      gl!.uniform1f(compProg.u['uPack'], pack);
-      gl!.uniform1f(compProg.u['uGlow'], Math.max(0, C.glow) * 0.26);
-      gl!.uniform1f(compProg.u['uExposure'], Math.max(0.05, C.exposure));
-      gl!.uniform1f(compProg.u['uVignette'], Math.max(0, Math.min(1, C.vignette)));
+      gl!.uniform1i(compProg.u['uScene']!, 0);
+      gl!.uniform1i(compProg.u['uBloom']!, 1);
+      gl!.uniform2f(compProg.u['uRes']!, width, height);
+      gl!.uniform1f(compProg.u['uDecode']!, hdr ? 0 : 1);
+      gl!.uniform1f(compProg.u['uPack']!, pack);
+      gl!.uniform1f(compProg.u['uGlow']!, Math.max(0, C.glow) * 0.26);
+      gl!.uniform1f(compProg.u['uExposure']!, Math.max(0.05, C.exposure));
+      gl!.uniform1f(compProg.u['uVignette']!, Math.max(0, Math.min(1, C.vignette)));
       gl!.uniform1f(
-        compProg.u['uScrimDir'],
+        compProg.u['uScrimDir']!,
         C.scrim === "left" ? 1 : C.scrim === "right" ? 2 : C.scrim === "top" ? 3 : C.scrim === "bottom" ? 4 : 0
       );
-      gl!.uniform1f(compProg.u['uScrimAmt'], Math.max(0, Math.min(1, C.scrimStrength)));
-      gl!.uniform1f(compProg.u['uSeed'], (t * 60) % 1000);
+      gl!.uniform1f(compProg.u['uScrimAmt']!, Math.max(0, Math.min(1, C.scrimStrength)));
+      gl!.uniform1f(compProg.u['uSeed']!, (t * 60) % 1000);
       draw();
     }
 
