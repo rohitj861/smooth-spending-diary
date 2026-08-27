@@ -41,7 +41,6 @@ export function Dashboard({ expenses }: { expenses: Expense[] }) {
     for (const e of month) map.set(e.category, (map.get(e.category) ?? 0) + e.amount);
     return [...map.entries()].sort((a, b) => b[1] - a[1]);
   }, [month]);
-  const maxCategory = byCategory[0]?.[1] ?? 0;
 
   const recent = expenses.slice(0, 5);
 
