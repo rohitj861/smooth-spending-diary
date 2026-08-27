@@ -44,19 +44,50 @@ function Index() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((_event, next) => {
+    let active = true;
+    const finish = (next: Session | null) => {
+      if (!active) return;
       setSession(next);
       setReady(true);
+    };
+
+    const { data } = supabase.auth.onAuthStateChange((_event, next) => {
+      finish(next);
     });
-    supabase.auth.getSession().then(({ data: { session: current } }) => {
-      setSession(current);
-      setReady(true);
-    });
-    return () => data.subscription.unsubscribe();
+
+    void supabase.auth
+      .getSession()
+      .then(({ data: { session: current } }) => finish(current))
+      .catch((error: unknown) => {
+        console.error("Unable to restore the saved session", error);
+        finish(null);
+      });
+
+    // A blocked storage or network request must never leave the app on an
+    // empty screen. Signed-in state can still arrive through the auth listener.
+    const timeout = window.setTimeout(() => finish(null), 4_000);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timeout);
+      data.subscription.unsubscribe();
+    };
   }, []);
 
   if (!ready) {
-    return <div className="min-h-screen bg-background" />;
+    return (
+      <main className="grid min-h-screen place-items-center bg-background px-6">
+        <div className="text-center" role="status" aria-live="polite">
+          <div className="mx-auto grid h-11 w-11 place-items-center rounded-xl border border-primary/30 text-lg font-semibold text-primary shadow-soft">
+            ₽
+          </div>
+          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.3em] text-primary">
+            Pennywise
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">Opening your account…</p>
+        </div>
+      </main>
+    );
   }
 
   if (!session) return <AuthCard />;
