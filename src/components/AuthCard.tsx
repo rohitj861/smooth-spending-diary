@@ -3,8 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { BlackHoleHeroSection } from "@/components/ui/blackhole-hero-section";
 import { toast } from "sonner";
+import blackHoleHero from "@/assets/pennywise-black-hole-hero.jpg";
 
 export function AuthCard() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -39,20 +39,17 @@ export function AuthCard() {
 
   return (
     <main className="min-h-screen bg-background">
-      <BlackHoleHeroSection
-        className="min-h-[100svh]"
-        scrim="left"
-        scrimStrength={0.8}
-        distance={44}
-        fov={30}
-        elevation={-6}
-        roll={-18}
-        focus={[0.75, 0.46]}
-        hotColor="#FFE9D2"
-        midColor="#E2703A"
-        coolColor="#5C2A12"
-      >
-        <div className="mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col justify-center px-6 py-20 sm:px-10">
+      <section className="relative min-h-[100svh] overflow-hidden bg-foreground">
+        <img
+          src={blackHoleHero}
+          alt="A glowing black hole with a warm copper accretion disk"
+          width={1920}
+          height={1080}
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover object-[68%_center]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/70 to-transparent" />
+        <div className="relative mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col justify-center px-6 py-20 sm:px-10">
 
           <div className="mb-10 flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.35em] text-primary-foreground/70">
             <span className="grid h-6 w-6 place-items-center rounded-md border border-primary-foreground/30">
@@ -86,7 +83,7 @@ export function AuthCard() {
             </a>
           </div>
         </div>
-      </BlackHoleHeroSection>
+      </section>
 
       <section id="access" className="px-6 py-24 sm:px-10">
         <div className="mx-auto grid w-full max-w-5xl gap-14 lg:grid-cols-2 lg:items-center">
