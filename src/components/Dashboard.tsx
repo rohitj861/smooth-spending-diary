@@ -83,32 +83,66 @@ export function Dashboard({ expenses }: { expenses: Expense[] }) {
       </section>
 
       <section>
-        <h2 className="mb-6 text-2xl font-semibold">Spending by category</h2>
-        <div className="rounded-3xl border bg-card p-8 shadow-soft">
+        <h2 className="mb-6 text-2xl font-semibold">Where it went</h2>
+        <div className="rounded-3xl border bg-card p-8 shadow-soft sm:p-10">
           {byCategory.length === 0 ? (
             <p className="text-sm text-muted-foreground">No expenses logged this month yet.</p>
           ) : (
-            <ul className="space-y-5">
-              {byCategory.map(([category, value]) => (
-                <li key={category}>
-                  <div className="mb-2 flex items-baseline justify-between gap-4">
-                    <span className="text-sm font-medium">{category}</span>
-                    <span className="text-sm font-semibold tabular-nums">
-                      {formatAmount(value)}
-                      <span className="ml-2 text-xs font-normal text-muted-foreground">
-                        {monthTotal ? Math.round((value / monthTotal) * 100) : 0}%
-                      </span>
-                    </span>
-                  </div>
-                  <div className="h-2.5 overflow-hidden rounded-full bg-secondary">
-                    <div
-                      className="h-full rounded-full bg-primary transition-[width] duration-500"
-                      style={{ width: `${maxCategory ? (value / maxCategory) * 100 : 0}%` }}
+            <div className="flex flex-col items-center gap-10 sm:flex-row sm:gap-16">
+              <div className="relative h-52 w-52 shrink-0 sm:h-60 sm:w-60">
+                <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90">
+                  {(() => {
+                    const R = 80;
+                    const C = 2 * Math.PI * R;
+                    let offset = 0;
+                    return byCategory.map(([category, value], i) => {
+                      const frac = monthTotal ? value / monthTotal : 0;
+                      const len = Math.max(frac * C - 2, 0);
+                      const el = (
+                        <circle
+                          key={category}
+                          cx="100"
+                          cy="100"
+                          r={R}
+                          fill="none"
+                          stroke={CATEGORY_COLORS[i % CATEGORY_COLORS.length]}
+                          strokeWidth="26"
+                          strokeDasharray={`${len} ${C - len}`}
+                          strokeDashoffset={-offset}
+                        />
+                      );
+                      offset += frac * C;
+                      return el;
+                    });
+                  })()}
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                    Total
+                  </span>
+                  <span className="mt-1 text-2xl font-bold tabular-nums tracking-tight sm:text-3xl">
+                    {formatAmount(monthTotal)}
+                  </span>
+                </div>
+              </div>
+              <ul className="w-full flex-1 space-y-4">
+                {byCategory.map(([category, value], i) => (
+                  <li key={category} className="flex items-center gap-3">
+                    <span
+                      className="h-3.5 w-3.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: CATEGORY_COLORS[i % CATEGORY_COLORS.length] }}
                     />
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    <span className="flex-1 text-sm font-medium">{category}</span>
+                    <span className="w-10 text-right text-xs text-muted-foreground tabular-nums">
+                      {monthTotal ? Math.round((value / monthTotal) * 100) : 0}%
+                    </span>
+                    <span className="w-24 text-right text-sm font-semibold tabular-nums">
+                      {formatAmount(value)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
       </section>
