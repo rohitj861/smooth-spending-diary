@@ -1,4 +1,3 @@
-blackhole-hero-section.tsx
 "use client";
 
 import * as React from "react";
