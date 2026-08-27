@@ -68,7 +68,7 @@ export function AuthCard() {
             <a
               href="#access"
               onClick={() => setMode("signup")}
-              className="rounded-full bg-primary-foreground px-6 py-3 text-sm font-medium text-background transition hover:opacity-90"
+              className="rounded-full bg-card px-6 py-3 text-sm font-medium text-card-foreground transition hover:opacity-90"
             >
               Get started
             </a>
