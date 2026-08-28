@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,11 +6,27 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import blackHoleHero from "@/assets/pennywise-black-hole-hero.jpg";
 
+// Live WebGL black hole, loaded only on the client after hydration. If WebGL
+// is unavailable or the context dies, the canvas hides itself and the static
+// hero image underneath stays visible — the page can never go blank.
+const BlackHoleHeroSection = lazy(() =>
+  import("@/components/ui/blackhole-hero-section").then((m) => ({
+    default: m.BlackHoleHeroSection,
+  })),
+);
+
 export function AuthCard() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [webglReady, setWebglReady] = useState(false);
+
+  useEffect(() => {
+    // Defer until after first paint so SSR/hydration is never blocked.
+    const id = window.requestAnimationFrame(() => setWebglReady(true));
+    return () => window.cancelAnimationFrame(id);
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -48,6 +64,22 @@ export function AuthCard() {
           fetchPriority="high"
           className="absolute inset-0 h-full w-full object-cover object-[68%_center]"
         />
+        {webglReady && (
+          <Suspense fallback={null}>
+            <BlackHoleHeroSection
+              className="absolute inset-0"
+              distance={44}
+              fov={30}
+              focus={[0.75, 0.46]}
+              hotColor="#FFE9D2"
+              midColor="#E2703A"
+              coolColor="#7A3308"
+              steps={220}
+              resolution={0.6}
+              maxDpr={1.5}
+            />
+          </Suspense>
+        )}
         <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/70 to-transparent" />
         <div className="relative mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col justify-center px-6 py-20 sm:px-10">
 
