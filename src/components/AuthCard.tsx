@@ -64,6 +64,22 @@ export function AuthCard() {
           fetchPriority="high"
           className="absolute inset-0 h-full w-full object-cover object-[68%_center]"
         />
+        {webglReady && (
+          <Suspense fallback={null}>
+            <BlackHoleHeroSection
+              className="absolute inset-0"
+              distance={44}
+              fov={30}
+              focus={[0.75, 0.46]}
+              hotColor="#FFE9D2"
+              midColor="#E2703A"
+              coolColor="#7A3308"
+              steps={220}
+              resolution={0.6}
+              maxDpr={1.5}
+            />
+          </Suspense>
+        )}
         <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/70 to-transparent" />
         <div className="relative mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col justify-center px-6 py-20 sm:px-10">
 
