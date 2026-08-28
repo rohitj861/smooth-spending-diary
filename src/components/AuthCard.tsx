@@ -6,11 +6,27 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import blackHoleHero from "@/assets/pennywise-black-hole-hero.jpg";
 
+// Live WebGL black hole, loaded only on the client after hydration. If WebGL
+// is unavailable or the context dies, the canvas hides itself and the static
+// hero image underneath stays visible — the page can never go blank.
+const BlackHoleHeroSection = lazy(() =>
+  import("@/components/ui/blackhole-hero-section").then((m) => ({
+    default: m.BlackHoleHeroSection,
+  })),
+);
+
 export function AuthCard() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [webglReady, setWebglReady] = useState(false);
+
+  useEffect(() => {
+    // Defer until after first paint so SSR/hydration is never blocked.
+    const id = window.requestAnimationFrame(() => setWebglReady(true));
+    return () => window.cancelAnimationFrame(id);
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
