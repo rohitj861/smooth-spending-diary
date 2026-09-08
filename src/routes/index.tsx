@@ -9,6 +9,7 @@ import { AuthCard } from "@/components/AuthCard";
 import { ExpenseForm, type ExpenseDraft } from "@/components/ExpenseForm";
 import { ExpenseList } from "@/components/ExpenseList";
 import { Dashboard } from "@/components/Dashboard";
+import { MonthlySummary } from "@/components/MonthlySummary";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -196,6 +197,9 @@ function Tracker({ email }: { email: string }) {
             <TabsTrigger value="expenses" className="rounded-xl px-5">
               Expenses
             </TabsTrigger>
+            <TabsTrigger value="summary" className="rounded-xl px-5">
+              Summary
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard">
@@ -229,6 +233,14 @@ function Tracker({ email }: { email: string }) {
                 )}
               </section>
             </div>
+          </TabsContent>
+
+          <TabsContent value="summary">
+            {isLoading ? (
+              <p className="text-sm text-muted-foreground">Loading…</p>
+            ) : (
+              <MonthlySummary expenses={expenses} />
+            )}
           </TabsContent>
         </Tabs>
       </main>

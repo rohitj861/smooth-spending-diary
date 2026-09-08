@@ -4,21 +4,16 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { formatAmount, formatDate, todayISO, type Expense } from "@/lib/expenses";
+import {
+  colorForCategory,
+  formatAmount,
+  formatDate,
+  monthKey,
+  summarizeByCategory,
+  todayISO,
+  type Expense,
+} from "@/lib/expenses";
 import { getMonthlyInsight, getSpokenSummary } from "@/lib/insights.functions";
-
-function isThisMonth(date: string) {
-  return date.slice(0, 7) === todayISO().slice(0, 7);
-}
-
-const CATEGORY_COLORS = [
-  "oklch(0.52 0.12 45)", // terracotta
-  "oklch(0.55 0.08 90)", // olive
-  "oklch(0.48 0.06 160)", // sage
-  "oklch(0.52 0.09 20)", // clay rose
-  "oklch(0.45 0.05 220)", // slate blue
-  "oklch(0.62 0.09 60)", // honey
-];
 
 function StatCard({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
@@ -35,7 +30,11 @@ function StatCard({ label, value, hint }: { label: string; value: string; hint?:
 }
 
 export function Dashboard({ expenses }: { expenses: Expense[] }) {
-  const month = useMemo(() => expenses.filter((e) => isThisMonth(e.date)), [expenses]);
+  const thisMonth = monthKey(todayISO());
+  const month = useMemo(
+    () => expenses.filter((e) => monthKey(e.date) === thisMonth),
+    [expenses, thisMonth],
+  );
 
   const monthTotal = month.reduce((s, e) => s + e.amount, 0);
   const today = todayISO();
@@ -45,11 +44,10 @@ export function Dashboard({ expenses }: { expenses: Expense[] }) {
     null,
   );
 
-  const byCategory = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const e of month) map.set(e.category, (map.get(e.category) ?? 0) + e.amount);
-    return [...map.entries()].sort((a, b) => b[1] - a[1]);
-  }, [month]);
+  const byCategory = useMemo(
+    () => summarizeByCategory(expenses, thisMonth),
+    [expenses, thisMonth],
+  );
 
   const recent = expenses.slice(0, 5);
 
@@ -114,7 +112,7 @@ export function Dashboard({ expenses }: { expenses: Expense[] }) {
                           cy="100"
                           r={R}
                           fill="none"
-                          stroke={CATEGORY_COLORS[i % CATEGORY_COLORS.length]}
+                          stroke={colorForCategory(category, i)}
                           strokeWidth="26"
                           strokeDasharray={`${len} ${C - len}`}
                           strokeDashoffset={-offset}
@@ -139,7 +137,7 @@ export function Dashboard({ expenses }: { expenses: Expense[] }) {
                   <li key={category} className="flex items-center gap-3">
                     <span
                       className="h-3.5 w-3.5 shrink-0 rounded-full"
-                      style={{ backgroundColor: CATEGORY_COLORS[i % CATEGORY_COLORS.length] }}
+                      style={{ backgroundColor: colorForCategory(category, i) }}
                     />
                     <span className="flex-1 text-sm font-medium">{category}</span>
                     <span className="w-10 text-right text-xs text-muted-foreground tabular-nums">
