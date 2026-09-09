@@ -76,6 +76,81 @@ export function summarizeByCategory(
   return [...map.entries()].sort((a, b) => b[1] - a[1]);
 }
 
+/** Expenses in a given `YYYY-MM` month, oldest first. */
+export function expensesInMonth(expenses: Expense[], month: string): Expense[] {
+  return expenses
+    .filter((e) => monthKey(e.date) === month)
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/** Step one calendar month away from a `YYYY-MM` key. */
+export function shiftMonth(month: string, delta: number) {
+  const [y, m] = month.split("-").map(Number);
+  const d = new Date(y ?? 1970, (m ?? 1) - 1 + delta, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+/**
+ * A few plain sentences capturing the shape of a month's spending — total,
+ * dominant categories, the largest single expense, and the change from the
+ * previous month. Computed from the numbers, not AI-generated.
+ */
+export function monthSummaryParagraph(expenses: Expense[], month: string): string {
+  const items = expensesInMonth(expenses, month);
+  if (items.length === 0) {
+    return `No expenses were recorded in ${monthLabel(month)}.`;
+  }
+
+  const total = items.reduce((sum, e) => sum + e.amount, 0);
+  const ranked = summarizeByCategory(expenses, month);
+  const biggest = items.reduce((best, e) => (e.amount > best.amount ? e : best));
+
+  const sentences: string[] = [
+    `In ${monthLabel(month)} you spent ${formatAmount(total)} across ${items.length} ${
+      items.length === 1 ? "expense" : "expenses"
+    }.`,
+  ];
+
+  const top = ranked[0];
+  if (top) {
+    const [topCategory, topValue] = top;
+    const share = total ? Math.round((topValue / total) * 100) : 0;
+    const second = ranked[1];
+    if (second) {
+      sentences.push(
+        `${topCategory} was the biggest category at ${formatAmount(topValue)} (${share}% of the month), then ${second[0]} at ${formatAmount(second[1])}.`,
+      );
+    } else {
+      sentences.push(`It all went to ${topCategory}.`);
+    }
+  }
+
+  sentences.push(
+    `The largest single expense was ${formatAmount(biggest.amount)} on ${biggest.category}${
+      biggest.note ? ` — ${biggest.note}` : ""
+    }.`,
+  );
+
+  const prevMonth = shiftMonth(month, -1);
+  const prevItems = expensesInMonth(expenses, prevMonth);
+  if (prevItems.length > 0) {
+    const prevTotal = prevItems.reduce((sum, e) => sum + e.amount, 0);
+    const diff = total - prevTotal;
+    if (Math.abs(diff) < 0.01) {
+      sentences.push(`That is about the same as ${monthLabel(prevMonth)}.`);
+    } else {
+      const pct = prevTotal ? Math.round((Math.abs(diff) / prevTotal) * 100) : 0;
+      sentences.push(
+        `That is ${formatAmount(Math.abs(diff))} ${diff > 0 ? "more" : "less"} than ${monthLabel(prevMonth)}${
+          pct ? ` (${diff > 0 ? "up" : "down"} ${pct}%)` : ""
+        }.`,
+      );
+    }
+  }
+
+  return sentences.join(" ");
+}
+
 export const CATEGORY_COLORS = [
   "oklch(0.52 0.12 45)", // terracotta
   "oklch(0.55 0.08 90)", // olive

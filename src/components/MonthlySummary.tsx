@@ -1,24 +1,21 @@
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Printer } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
   colorForCategory,
+  expensesInMonth,
   formatAmount,
+  formatDate,
   listMonths,
   monthKey,
   monthLabel,
+  monthSummaryParagraph,
+  shiftMonth,
   summarizeByCategory,
   todayISO,
   type Expense,
 } from "@/lib/expenses";
-
-/** Step one calendar month away from a `YYYY-MM` key. */
-function shiftMonth(month: string, delta: number) {
-  const [y, m] = month.split("-").map(Number);
-  const d = new Date(y ?? 1970, (m ?? 1) - 1 + delta, 1);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-}
 
 export function MonthlySummary({ expenses }: { expenses: Expense[] }) {
   const thisMonth = monthKey(todayISO());
@@ -33,9 +30,14 @@ export function MonthlySummary({ expenses }: { expenses: Expense[] }) {
     () => summarizeByCategory(expenses, month),
     [expenses, month],
   );
+  const items = useMemo(
+    () => expensesInMonth(expenses, month),
+    [expenses, month],
+  );
   const monthTotal = rows.reduce((sum, [, value]) => sum + value, 0);
-  const count = useMemo(
-    () => expenses.filter((e) => monthKey(e.date) === month).length,
+  const count = items.length;
+  const paragraph = useMemo(
+    () => monthSummaryParagraph(expenses, month),
     [expenses, month],
   );
 
@@ -44,6 +46,19 @@ export function MonthlySummary({ expenses }: { expenses: Expense[] }) {
 
   return (
     <div className="space-y-8">
+      <div className="flex justify-end">
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-xl"
+          disabled={rows.length === 0}
+          onClick={() => window.print()}
+        >
+          <Printer className="mr-2 h-4 w-4" />
+          Export PDF
+        </Button>
+      </div>
+
       <div className="flex items-center justify-between gap-4">
         <Button
           variant="ghost"
@@ -113,6 +128,74 @@ export function MonthlySummary({ expenses }: { expenses: Expense[] }) {
               );
             })}
           </ul>
+        )}
+      </div>
+
+      {/* Print-only: revealed by the @media print block in styles.css. */}
+      <div id="pennywise-print" className="hidden print:block">
+        <h1>Pennywise</h1>
+        <p style={{ marginTop: "2pt", fontSize: "12pt", fontWeight: 600 }}>Monthly summary</p>
+        <p style={{ marginTop: "6pt" }}>
+          {monthLabel(month)} · generated {formatDate(todayISO())}
+        </p>
+
+        {rows.length === 0 ? (
+          <p style={{ marginTop: "10pt" }}>No expenses recorded in {monthLabel(month)}.</p>
+        ) : (
+          <>
+            <p style={{ marginTop: "10pt", lineHeight: 1.5 }}>{paragraph}</p>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th className="num">Amount</th>
+                  <th className="num">Share</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map(([category, value]) => (
+                  <tr key={category}>
+                    <td>{category}</td>
+                    <td className="num">{formatAmount(value)}</td>
+                    <td className="num">
+                      {monthTotal ? Math.round((value / monthTotal) * 100) : 0}%
+                    </td>
+                  </tr>
+                ))}
+                <tr>
+                  <td style={{ fontWeight: 700 }}>Total</td>
+                  <td className="num" style={{ fontWeight: 700 }}>
+                    {formatAmount(monthTotal)}
+                  </td>
+                  <td className="num" style={{ fontWeight: 700 }}>
+                    100%
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th className="num">Amount</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((e) => (
+                  <tr key={e.id}>
+                    <td>{formatDate(e.date)}</td>
+                    <td>{e.category}</td>
+                    <td className="num">{formatAmount(e.amount)}</td>
+                    <td>{e.note ?? "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
     </div>

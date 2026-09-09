@@ -144,3 +144,55 @@
     letter-spacing: -0.02em;
   }
 }
+
+@media print {
+  /* Hide the whole app; show only the monthly summary's print block. */
+  body * {
+    visibility: hidden;
+  }
+  #pennywise-print,
+  #pennywise-print * {
+    visibility: visible;
+  }
+  #pennywise-print {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+  }
+
+  @page {
+    margin: 18mm 16mm;
+  }
+
+  /* Plain black-on-white typography for the print block (sidesteps oklch). */
+  #pennywise-print {
+    font-size: 11pt;
+    color: #1a1a1a;
+  }
+  #pennywise-print h1 {
+    font-size: 20pt;
+    margin: 0;
+  }
+  #pennywise-print table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10pt;
+  }
+  #pennywise-print th,
+  #pennywise-print td {
+    text-align: left;
+    padding: 4pt 6pt;
+    border-bottom: 1px solid #ccc;
+  }
+  #pennywise-print .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  #pennywise-print thead {
+    display: table-header-group; /* repeat header on each page */
+  }
+  #pennywise-print tr {
+    break-inside: avoid;
+  }
+}
